@@ -22,11 +22,11 @@ public class Roller extends SubsystemBase {
           .withControlMode(ControlMode.OPEN_LOOP)
           .withTelemetry("RollerMotor", TelemetryVerbosity.HIGH)
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-          .withMotorInverted(false)
+          .withMotorInverted(true)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(Amps.of(40));
 
-  private TalonFX rollerTalonFX = new TalonFX(0);
+  private TalonFX rollerTalonFX = new TalonFX(14);
 
   private SmartMotorController rollerController =
       new TalonFXWrapper(rollerTalonFX, DCMotor.getFalcon500(1), rollerConfig);
@@ -40,8 +40,13 @@ public class Roller extends SubsystemBase {
   }
 
   public Command set(double dutyCycle) {
-    return this.runOnce(() -> this.setDutyCycle(dutyCycle))
-        .finallyDo(() -> this.setDutyCycle(0))
+    return this.run(() -> this.setDutyCycle(dutyCycle))
+        .finallyDo(
+            interrupted -> {
+              if (interrupted) {
+                this.setDutyCycle(0);
+              }
+            })
         .withName("SetRoller");
   }
 
