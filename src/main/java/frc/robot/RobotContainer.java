@@ -30,7 +30,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.roller.Roller;
+import frc.robot.subsystems.roller.RollerAKit;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -42,7 +42,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private Roller roller = new Roller();
+  private final RollerAKit roller = new RollerAKit();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -149,7 +149,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.y().whileTrue(roller.set(.5));
+    controller.y().onTrue(Commands.runOnce(() -> System.out.println("sybau stars")));
   }
 
   /**
